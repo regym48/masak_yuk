@@ -1,4 +1,4 @@
-import { Modal, Container, Button, Breadcrumb, Row, Col } from 'react-bootstrap';
+import { Modal, Container, Button, Breadcrumb, Row, Col, Form } from 'react-bootstrap';
 import { useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom';
 import swal from 'sweetalert';
@@ -18,7 +18,7 @@ export const ListVideo = () => {
 
     useEffect(() => {
         const login = localStorage.getItem('dataLoginUser');
-        if(!login){
+        if (!login) {
             history.push('/');
         }
         getDataVideo();
@@ -162,8 +162,8 @@ export const ListVideo = () => {
 
     return (
         <>
-             {/* modal player */}
-             <Modal
+            {/* modal player */}
+            <Modal
                 show={handleShowVideo}
                 backdrop="static"
                 keyboard={false}
@@ -190,7 +190,9 @@ export const ListVideo = () => {
                                     controls={true}
                                     url={`${linkVideo}`}
                                 />
-                                <p>{deskripsi}</p>
+                                <Form.Group className="mb-3 mt-3" controlId="exampleForm.ControlTextarea1">
+                                    <Form.Control value={deskripsi} as="textarea" rows={4} disabled/>
+                                </Form.Group>
                             </>
                         }
                     </div>
@@ -205,11 +207,11 @@ export const ListVideo = () => {
             <Navigasi />
             {/* <h5 className="card-title">Anda Sedang Belajar Materi {dataListProgress}</h5> */}
             <Breadcrumb>
-                <Breadcrumb.Item active>Anda Sedang Belajar Materi {dataListProgress}</Breadcrumb.Item>
+                <Breadcrumb.Item active>Materi yang anda pelajari sebelumnya adalah : {dataListProgress}</Breadcrumb.Item>
             </Breadcrumb>
             <Button onClick={(e) => handleBack(e)} variant="primary" type="submit">
-                    Kembali ke List Course
-                </Button>
+                Kembali ke List Course
+            </Button>
             <div className="row justify-content-center">
                 {
                     dataListVideo ? dataListVideo.map((dat, index) => {

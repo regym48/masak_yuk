@@ -1,4 +1,4 @@
-import { Navbar, Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import { Navbar, Container, Row, Col, Card, Form, Button, Modal } from "react-bootstrap";
 import "./Style.css"
 import icon from "./icon-masak.png";
 import logo from "./chef.jpg";
@@ -10,62 +10,115 @@ import swal from 'sweetalert';
 export const Login = () => {
     const history = useHistory();
     const [email, setEmail] = useState('');
+    const [emailLupa, setEmailLupa] = useState('');
+    console.log(emailLupa);
     const [password, setPassword] = useState('');
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         const role = localStorage.getItem('dataRole');
-        
-        if(role === 'admin'){
-            history.push('/halaman-admin');
-        }else if(role === 'pengajar'){
-            history.push('/halaman-pengajar');
-        }else if(role === 'murid'){
-            history.push('/halaman-murid');
-        } 
-    },[]);
 
-    const handleSubmit = (e) =>{
+        if (role === 'admin') {
+            history.push('/halaman-admin');
+        } else if (role === 'pengajar') {
+            history.push('/halaman-pengajar');
+        } else if (role === 'murid') {
+            history.push('/halaman-murid');
+        }
+    }, []);
+
+    const handleShow = () => {
+        setShow(true);
+    }
+
+    const handleClose = () => {
+        setShow(false)
+    }
+
+    const handleSubmit = (e) => {
         e.preventDefault();
         const dataSend = {
             email,
             password
         }
-        if(email ==='' || password ===''){
+        if (email === '' || password === '') {
             swal("Failed", "Login Gagal", "error")
-        }else{
-            fetch(`${process.env.REACT_APP_API}/login`,{
-                method:'POST',
+        } else {
+            fetch(`${process.env.REACT_APP_API}/login`, {
+                method: 'POST',
                 body: JSON.stringify(dataSend),
-                headers:{
-                    'Content-Type' : 'application/json'
+                headers: {
+                    'Content-Type': 'application/json'
                 }
             })
-            .then(res => res.json()).then(hasil =>{
-                console.log(hasil);
-                if(hasil.status === 'berhasil'){
-                    localStorage.setItem('dataLoginUser',hasil.token);
-                    localStorage.setItem('dataNamaUser',hasil.nama);
-                    localStorage.setItem('dataIdUser',hasil.id_user);
-                    localStorage.setItem('dataRole',hasil.role);
-                    const jabatan = localStorage.getItem('dataRole');
-                    if(jabatan === 'admin'){
-                        history.push('/halaman-admin');
-                    }else if(jabatan === 'pengajar'){
-                        history.push('/halaman-pengajar');
-                    }else if(jabatan === 'murid'){
-                        history.push('/halaman-murid');
-                    }   
-                }else{
-                    swal("Failed", hasil.message, "error")
-                }
-            })
-            .catch(err =>{
-                alert(err)
-            })
+                .then(res => res.json()).then(hasil => {
+                    console.log(hasil);
+                    if (hasil.status === 'berhasil') {
+                        localStorage.setItem('dataLoginUser', hasil.token);
+                        localStorage.setItem('dataNamaUser', hasil.nama);
+                        localStorage.setItem('dataIdUser', hasil.id_user);
+                        localStorage.setItem('dataRole', hasil.role);
+                        const jabatan = localStorage.getItem('dataRole');
+                        if (jabatan === 'admin') {
+                            history.push('/halaman-admin');
+                        } else if (jabatan === 'pengajar') {
+                            history.push('/halaman-pengajar');
+                        } else if (jabatan === 'murid') {
+                            history.push('/halaman-murid');
+                        }
+                    } else {
+                        swal("Failed", hasil.message, "error")
+                    }
+                })
+                .catch(err => {
+                    alert(err)
+                })
         }
     }
+
+    const handleLupa = () => {
+        const dataSend = {
+            email: emailLupa
+        }
+        fetch(`${process.env.REACT_APP_API}/lupaPassword`, {
+            method: 'POST',
+            body: JSON.stringify(dataSend),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => res.json()).then(hasil => {
+                swal("success", "silahkan periksa email anda", "success")
+                handleClose();
+            })
+            .catch(err => {
+                swal("success", "silahkan periksa email anda", "success")
+                handleClose();
+            })
+    }
+
     return (
         <>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header>
+                    <Modal.Title>Lupas Password</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="form-group">
+                        <label htmlFor="emailLupa">Email Anda</label>
+                        <input onChange={(e) => setEmailLupa(e.target.value)} value={emailLupa} type="email" className="form-control" id="emailLupa"></input>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="danger" onClick={handleLupa}>
+                        Submit
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
             <Navbar bg="kuning" variant="light">
                 <Container>
                     <Navbar.Brand href="/registrasi-admin">
@@ -127,6 +180,10 @@ export const Login = () => {
                                 <span>
                                     <a href="/registrasi-murid">Disini!</a>
                                 </span>
+                                <p></p>
+                                <Button onClick={() => handleShow()} variant="warning" type="button">
+                                    Lupa Password
+                                </Button>
                             </Card.Header>
                         </Card>
                     </Col>

@@ -1,9 +1,10 @@
-import { Container, Row, Col} from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import { Navigasi } from "./Navigasi"
 import gmbr from "./logo-masak.png";
 import { useEffect, useState } from "react";
 import { ListCourse } from "./ListCourse";
 import { useHistory } from 'react-router-dom';
+import { Komen } from "./Komen";
 
 export const HalamanPengajar = () => {
     const history = useHistory();
@@ -11,7 +12,7 @@ export const HalamanPengajar = () => {
 
     useEffect(() => {
         const login = localStorage.getItem('dataLoginUser');
-        if(!login){
+        if (!login) {
             history.push('/');
             return;
         }
@@ -36,10 +37,19 @@ export const HalamanPengajar = () => {
                         </div>
                     </Col>
                     <Col sm={8}>
-                        <ListCourse/>
+                        <ListCourse />
                     </Col>
                 </Row>
             </Container>
+            <div className="justify-content-center">
+                <Row>
+                    <Col sm={1}></Col>
+                    <Col sm={10}>
+                        <Komen />
+                    </Col>
+                    <Col sm={1}></Col>
+                </Row>
+            </div>
         </>
     )
 }

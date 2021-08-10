@@ -4,9 +4,12 @@ import swal from 'sweetalert';
 
 export const Komen = () => {
     const [komen, setKomen] = useState('');
+    const [dataListCourse, setDataListCourse] = useState([]);
     const [dataKomen, setDataKomen] = useState([]);
+    const [idCou, setIdCou] = useState('');
 
     useEffect(() => {
+        getDataCourse();
         getDataKomen();
     }, []);
 
@@ -14,14 +17,38 @@ export const Komen = () => {
         setKomen('');
     }
 
+    const getDataCourse = () => {
+        const token = localStorage.getItem('dataLoginUser');
+        const senData = {
+            token: token
+        }
+        fetch(`${process.env.REACT_APP_API}/listCourse`, {
+            method: 'POST',
+            body: JSON.stringify(senData),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => res.json()).then(hasil => {
+                console.log('data', hasil);
+                if (hasil.status === 'berhasil') {
+                    setDataListCourse(hasil.data);
+                } else {
+                    swal("failed", hasil.message, "error")
+                }
+            })
+            .catch(err => {
+                alert(err)
+            })
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const token = localStorage.getItem('dataLoginUser');
-        const idCo = localStorage.getItem('dataIdCourse');
         const name = localStorage.getItem('dataNamaUser');
         const dataSend = {
             token: token,
-            id_course: idCo,
+            id_course: idCou,
             nama_user: name,
             komen
         }
@@ -47,10 +74,9 @@ export const Komen = () => {
 
     const getDataKomen = () => {
         const token = localStorage.getItem('dataLoginUser');
-        const idCourse = localStorage.getItem('dataIdCourse');
         const senDataProg = {
             token: token,
-            id_course: idCourse
+            id_course: idCou
         }
         fetch(`${process.env.REACT_APP_API}/listKomen`, {
             method: 'POST',
@@ -64,7 +90,7 @@ export const Komen = () => {
                 if (proses.status === 'berhasil') {
                     setDataKomen(proses.data);
                 } else {
-                    alert(proses.status);
+                    console.log(proses.status);
                 }
             })
             .catch(err => {
@@ -74,6 +100,19 @@ export const Komen = () => {
 
     return (
         <>
+            <Form.Select className="mb-3" onChange={(e) => setIdCou(e.target.value)} aria-label="Default select example">
+                <option selected value="1">--Pilih Course--</option>
+                {
+                    dataListCourse ? dataListCourse.map((dat, index) => {
+                        return (
+                            <option key={index} value={dat.id_course}>{dat.nama_course}</option>
+                        )
+                    }) : ''
+                }
+            </Form.Select>
+            <button onClick={(e) => getDataKomen(e)} class="btn btn-primary btn-md ml-3" role="button">
+                Lihat Diskusis
+            </button>
             <ListGroup as="ul">
                 <ListGroup.Item as="li" active>
                     Dapur Diskusi

@@ -104,7 +104,7 @@ export const Navigasi = () => {
                 </Modal.Body>
             </Modal>
 
-            <Navbar bg="kuning" variant="light">
+            <Navbar bg="kuning" variant="light" sticky="top">
                 <Container>
                     <Navbar.Brand>
                         <img

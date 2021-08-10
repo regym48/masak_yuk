@@ -16,6 +16,11 @@ export const ListCourse = () =>{
     const [idDel, setIdDel] = useState('');
     
     useEffect(() => {
+        const login = localStorage.getItem('dataLoginUser');
+        if (!login) {
+            history.push('/');
+            return;
+        }
         getDataCourse();
     }, []);
 
